@@ -2,6 +2,7 @@ package io.github.otavioyukio.foodfly.product;
 
 import org.springframework.data.domain.Sort;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,20 +24,16 @@ public class ProductServiceImpl implements ProductService {
     }
 
     public Product updateProductById(Long id, Product newProduct) {
-        Optional<Product> product = productRepository.findById(id);
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found."));
 
-        if (product.isEmpty()) {
-            return null;
-        }
+        product.setName(newProduct.getName());
+        product.setPrice(newProduct.getPrice());
+        product.setImageUrl(newProduct.getImageUrl());
+        product.setDescription(newProduct.getDescription());
+        product.setIsActive(newProduct.getIsActive());
+        product.setCategory(newProduct.getCategory());
 
-        Product existingProduct = product.get();
-        existingProduct.setName(newProduct.getName());
-        existingProduct.setPrice(newProduct.getPrice());
-        existingProduct.setImageUrl(newProduct.getImageUrl());
-        existingProduct.setDescription(newProduct.getDescription());
-        existingProduct.setIsActive(newProduct.getIsActive());
-        existingProduct.setCategory(newProduct.getCategory());
-
-        return productRepository.save(existingProduct);
+        return productRepository.save(product);
     }
 }
